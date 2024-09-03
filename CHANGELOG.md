@@ -1,3 +1,9 @@
+## v0.0.2 (2024-09-03)
+
+### Fix
+
+- amended permissions to be more restrictive
+
 ## v0.0.1 (2024-09-03)
 
 ### Fix
