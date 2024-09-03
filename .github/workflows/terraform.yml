@@ -9,9 +9,15 @@ on:
         required: true
         default: false
 
-  pull_request:
-    paths:
-    - infra/**
+      environment:
+        description: 'The target environment for deployment (dev, uat, or prod)'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - uat
+          - prod
 
 permissions:
   id-token: write
@@ -22,7 +28,7 @@ jobs:
     name: Terraform plan
     runs-on: ubuntu-latest
     environment: tfplan
-    
+
     steps:
     - uses: actions/checkout@v2
 
@@ -35,10 +41,10 @@ jobs:
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
-    
+
     - name: Setup TFLint
       uses: terraform-linters/setup-tflint@v1
-    
+
     - name: Terraform fmt
       id: fmt
       run: terraform fmt -check
@@ -62,12 +68,12 @@ jobs:
 
     - name: Run TFLint
       run: tflint -f compact
-    
+
     - name: Calculate destroy arg
       id: destroy_arg
       run: |
         if [ $DESTROY == "true" ]; then
-          echo "::set-output name=val::-destroy" 
+          echo "::set-output name=val::-destroy"
         else
           echo "::set-output name=val:: "
         fi
@@ -76,13 +82,14 @@ jobs:
 
     - name: Terraform Plan
       id: plan
-      run: terraform plan $DESTROY -no-color --out=out.tfplan
+      run: terraform plan $DESTROY -no-color --out=main.tfplan -var-file=environments/$ENVIRONMENT.tfvars
       env:
         ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         ARM_USE_OIDC: true
         DESTROY: ${{ steps.destroy_arg.outputs.val }}
+        ENVIRONMENT: ${{ github.event.inputs.environment }}
 
     - name: Create the plan summary
       uses: actions/github-script@v6
@@ -106,22 +113,22 @@ jobs:
           </details>
 
           #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-          
+
           <details><summary>Show Plan</summary>
-          
+
           \`\`\`\n
           ${process.env.PLAN}
           \`\`\`
-          
+
           </details>
-          
+
           *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
-          
+
           // 2. Set the output variable
           const fs = require('fs');
           fs.writeFileSync('${{ env.tf_actions_working_dir }}/summary.md', output);
           core.setOutput('summary', output);
-      
+
     - name: Write the step summary
       if: always()
       run: cat summary.md >> $GITHUB_STEP_SUMMARY
@@ -130,7 +137,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: tf-plan
-        path: ${{ env.tf_actions_working_dir }}/out.tfplan
+        path: ${{ env.tf_actions_working_dir }}/main.tfplan
 
     - name: Publish plan as a status
       if: github.event_name == 'pull_request'
@@ -150,7 +157,7 @@ jobs:
     defaults:
       run:
         working-directory: ${{ env.tf_actions_working_dir }}
-    
+
     steps:
     - uses: actions/checkout@v2
 
@@ -181,13 +188,13 @@ jobs:
 
     - name: Apply the plan
       id: apply
-      run: terraform apply -no-color -auto-approve out.tfplan
+      run: terraform apply -no-color -auto-approve main.tfplan
       env:
         ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         ARM_USE_OIDC: true
-    
+
     - name: Create the plan summary
       uses: actions/github-script@v6
       if: always()
@@ -199,22 +206,22 @@ jobs:
         script: |
           // 1. Prep the output
           const output = `#### Terraform Apply 🚗\`${{ steps.apply.outcome }}\`
-          
+
           <details><summary>Show details</summary>
-          
+
           \`\`\`\n
           ${process.env.APPLY}
           \`\`\`
-          
+
           </details>
-          
+
           *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
-          
+
           // 2. Set the output variable
           const fs = require('fs');
           fs.writeFileSync('${{ env.tf_actions_working_dir }}/summary.md', output);
           core.setOutput('summary', output);
-      
+
     - name: Write the step summary
       if: always()
       run: cat summary.md >> $GITHUB_STEP_SUMMARY
