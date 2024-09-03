@@ -29,9 +29,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: tfplan
     outputs:
-      fmt: ${{ steps.fmt.outcome }}
-      init: ${{ steps.init.outcome }}
-      validate: ${{ steps.validate.outcome }}
+      fmt: ${{ steps.fmt.outputs.outcome }}
+      init: ${{ steps.init.outputs.outcome }}
+      validate: ${{ steps.validate.outputs.outcome }}
 
     steps:
     - uses: actions/checkout@v4
@@ -143,9 +143,9 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           // 1. Prep the output
-          const output = `#### Terraform Format and Style 🖌\`${{ env.fmt.outcome }}\`
-          #### Terraform Initialization ⚙️\`${{ env.init.outcome }}\`
-          #### Terraform Validation 🤖\`${{ env.validate.outcome }}\`
+          const output = `#### Terraform Format and Style 🖌\`${{ env.fmt }}\`
+          #### Terraform Initialization ⚙️\`${{ env.init }}\`
+          #### Terraform Validation 🤖\`${{ env.validate }}\`
           <details><summary>Validation Output</summary>
 
           \`\`\`\n
