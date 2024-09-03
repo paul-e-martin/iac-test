@@ -84,8 +84,6 @@ jobs:
     needs: [ validate ]
     runs-on: ubuntu-latest
     environment: tfplan
-    outputs:
-
 
     steps:
     - name: Log in to Azure using OIDC
