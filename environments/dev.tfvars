@@ -66,13 +66,11 @@ key_vault_soft_delete_retention_days = 7
 key_vault_sku_name                   = "standard"
 
 # DB module
-db_private_dns_zone_name   = "db-private-dns-zone.postgres.database.azure.com"
-db_dns_zone_vnet_link_name = "postgresql-dns-zone-vnet-link"
-db_version                 = "16"
-db_zone                    = "1"
-db_storage_mb              = 32768
-db_sku_name                = "B_Standard_B1ms"
-db_backup_retention_days   = 7
+db_version               = "16"
+db_zone                  = "1"
+db_storage_mb            = 32768
+db_sku_name              = "B_Standard_B1ms"
+db_backup_retention_days = 7
 db_ha = {
   #mode = "SameZone" #SameZone or ZoneRedundant
 }
