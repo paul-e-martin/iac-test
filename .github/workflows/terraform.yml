@@ -28,10 +28,6 @@ jobs:
     name: Terraform validate
     runs-on: ubuntu-latest
     environment: tfplan
-    outputs:
-      fmt: ${{ steps.fmt.outputs.outcome }}
-      init: ${{ steps.init.outputs.outcome }}
-      validate: ${{ steps.validate.outputs.outcome }}
 
     steps:
     - uses: actions/checkout@v4
@@ -140,17 +136,6 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           // 1. Prep the output
-          const output = `#### Terraform Format and Style 🖌\`${{ needs.validate.outputs.fmt }}\`
-          #### Terraform Initialization ⚙️\`${{ needs.validate.outputs.init }}\`
-          #### Terraform Validation 🤖\`${{ needs.validate.outputs.validate }}\`
-          <details><summary>Validation Output</summary>
-
-          \`\`\`\n
-          ${{ needs.validate.outputs.validate }}
-          \`\`\`
-
-          </details>
-
           #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
 
           <details><summary>Show Plan</summary>
