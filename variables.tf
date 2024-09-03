@@ -1,4 +1,5 @@
 variable "environment" {
+  type        = string
   description = "Environment"
 }
 
@@ -98,14 +99,6 @@ variable "key_vault_sku_name" {
 }
 
 # DB module
-variable "db_private_dns_zone_name" {
-  type = string
-}
-
-variable "db_dns_zone_vnet_link_name" {
-  type = string
-}
-
 variable "db_version" {
   type = string
 }
