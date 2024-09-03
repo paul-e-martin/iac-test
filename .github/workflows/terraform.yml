@@ -98,8 +98,8 @@ jobs:
       with:
         name: terraform
 
-    - name: List files
-      run: ls -R
+    - name: Extract artefact
+      run: tar -xvf terraform.tar .
         
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
@@ -202,6 +202,9 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: terraform
+
+    - name: Extract artefact
+      run: tar -xvf terraform.tar .
 
     - name: Download the plan
       uses: actions/download-artifact@v4
