@@ -74,6 +74,7 @@ jobs:
       with:
         name: terraform
         path: .
+        include-hidden-files: true
     
   plan:
     name: Terraform plan
@@ -93,13 +94,6 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: terraform
-
-    - name: Display structure of downloaded files
-      run: ls -R
-
-    - name: Extract artifact
-      run: |
-        unzip terraform
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
@@ -202,10 +196,6 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: terraform
-
-    - name: Extract artifact
-      run: |
-        unzip terraform
 
     - name: Download the plan
       uses: actions/download-artifact@v4
