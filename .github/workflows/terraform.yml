@@ -96,7 +96,7 @@ jobs:
 
     - name: Extract artifact
       run: |
-        unzip terraform.zip
+        unzip terraform
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
@@ -202,7 +202,7 @@ jobs:
 
     - name: Extract artifact
       run: |
-        unzip terraform.zip
+        unzip terraform
 
     - name: Download the plan
       uses: actions/download-artifact@v4
