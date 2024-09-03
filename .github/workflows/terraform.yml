@@ -136,20 +136,17 @@ jobs:
       id: summary
       env:
         PLAN: '${{ steps.plan.outputs.stdout }}'
-        fmt: ${{needs.validate.outputs.fmt}}
-        init: ${{needs.validate.outputs.init}}
-        validate: ${{needs.validate.outputs.validate}}
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           // 1. Prep the output
-          const output = `#### Terraform Format and Style 🖌\`${{ env.fmt }}\`
-          #### Terraform Initialization ⚙️\`${{ env.init }}\`
-          #### Terraform Validation 🤖\`${{ env.validate }}\`
+          const output = `#### Terraform Format and Style 🖌\`${{ needs.validate.outputs.fmt }}\`
+          #### Terraform Initialization ⚙️\`${{ needs.validate.outputs.init }}\`
+          #### Terraform Validation 🤖\`${{ needs.validate.outputs.validate }}\`
           <details><summary>Validation Output</summary>
 
           \`\`\`\n
-          ${{ steps.validate.outputs.stdout }}
+          ${{ needs.validate.outputs.validate }}
           \`\`\`
 
           </details>
