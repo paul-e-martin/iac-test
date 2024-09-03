@@ -3,7 +3,7 @@ name: Bump version
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   bump_version:
@@ -12,7 +12,7 @@ jobs:
     name: "Bump version and create changelog with commitizen"
     steps:
       - name: Check out
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: "${{ secrets.GITHUB_TOKEN }}"
