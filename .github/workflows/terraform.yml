@@ -153,7 +153,7 @@ jobs:
     name: Terraform apply
     needs: [ plan ]
     runs-on: ubuntu-latest
-    environment: dev
+    environment: ${{ github.event.inputs.environment }}
     
     steps:
     - uses: actions/checkout@v2
@@ -166,11 +166,11 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+      uses: hashicorp/setup-terraform@v3
 
     - name: Terraform Init
       id: init
-      run: terraform init
+      run: terraform init -backend-config storage_account_name=cgdevuksstterraform -backend-config container_name=tfstate -backend-config key=terraform.tfstate -backend-config resource_group_name=cg-uks-rg -backend-config subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }} -backend-config tenant_id=${{ secrets.AZURE_TENANT_ID }}
       env:
         ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -181,7 +181,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: tf-plan
-        path: ${{ env.tf_actions_working_dir }}
+        path: .
 
     - name: Apply the plan
       id: apply
@@ -212,11 +212,11 @@ jobs:
 
           </details>
 
-          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`*`;
 
           // 2. Set the output variable
           const fs = require('fs');
-          fs.writeFileSync('${{ env.tf_actions_working_dir }}/summary.md', output);
+          fs.writeFileSync('summary.md', output);
           core.setOutput('summary', output);
 
     - name: Write the step summary
