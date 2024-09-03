@@ -136,7 +136,7 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           // 1. Prep the output
-          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+          const output = `#### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
 
           <details><summary>Show Plan</summary>
 
