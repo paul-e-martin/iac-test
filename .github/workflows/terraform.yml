@@ -181,7 +181,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: tf-plan
-        path: .
+        path: main.tfplan
 
     - name: Apply the plan
       id: apply
