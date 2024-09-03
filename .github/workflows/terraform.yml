@@ -13,9 +13,6 @@ on:
     paths:
     - infra/**
 
-env:
-  tf_actions_working_dir: infra
-
 permissions:
   id-token: write
   contents: read
