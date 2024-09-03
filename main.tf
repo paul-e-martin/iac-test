@@ -87,7 +87,7 @@ module "cdn-endpoint" {
   resource_group_name                  = module.rg.resource_group_name
   cdn_endpoint_name                    = each.key
   origin_name                          = each.value.origin_name
-  origin_url                           = lookup(module.static-website, each.value.origin_name).static_website_primary_web_host
+  origin_url                           = module.static-website[each.value.origin_name].static_website_primary_web_host
   cdn_endpoint_custom_domain_name      = each.value.cdn_endpoint_custom_domain_name
   cdn_endpoint_custom_domain_host_name = each.value.cdn_endpoint_custom_domain_host_name
   log_analytics_workspace_id           = module.law.log_analytics_workspace_id

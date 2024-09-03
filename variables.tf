@@ -119,7 +119,7 @@ variable "db_backup_retention_days" {
 }
 
 variable "db_ha" {
-  #type = map(any)
+  type = any
 }
 
 # Web pubsub module
