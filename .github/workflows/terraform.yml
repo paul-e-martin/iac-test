@@ -28,6 +28,10 @@ jobs:
     name: Terraform validate
     runs-on: ubuntu-latest
     environment: tfplan
+    outputs:
+      fmt: ${{ steps.fmt.outcome }}
+      init: ${{ steps.init.outcome }}
+      validate: ${{ steps.validate.outcome }}
 
     steps:
     - uses: actions/checkout@v4
@@ -72,13 +76,13 @@ jobs:
 
     - name: Tar files
       run: tar -cvf terraform.tar .
-    
+
     - name: Upload the initialized repository
       uses: actions/upload-artifact@v4
       with:
         name: terraform
         path: terraform.tar
-    
+
   plan:
     name: Terraform plan
     needs: [ validate ]
@@ -92,7 +96,7 @@ jobs:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        
+
     - name: Download the initialized repository
       uses: actions/download-artifact@v4
       with:
@@ -100,10 +104,10 @@ jobs:
 
     - name: Extract artefact
       run: tar -xvf terraform.tar .
-        
+
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
-        
+
     - name: Calculate destroy arg
       id: destroy_arg
       run: |
@@ -132,13 +136,16 @@ jobs:
       id: summary
       env:
         PLAN: '${{ steps.plan.outputs.stdout }}'
+        fmt: ${{needs.validate.outputs.fmt}}
+        init: ${{needs.validate.outputs.init}}
+        validate: ${{needs.validate.outputs.validate}}
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           // 1. Prep the output
-          const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-          #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-          #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+          const output = `#### Terraform Format and Style 🖌\`${{ env.fmt.outcome }}\`
+          #### Terraform Initialization ⚙️\`${{ env.init.outcome }}\`
+          #### Terraform Validation 🤖\`${{ env.validate.outcome }}\`
           <details><summary>Validation Output</summary>
 
           \`\`\`\n
@@ -197,7 +204,7 @@ jobs:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        
+
     - name: Download the initialized repository
       uses: actions/download-artifact@v4
       with:
