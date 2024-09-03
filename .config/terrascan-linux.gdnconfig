@@ -1,0 +1,17 @@
+{
+  "tools": [
+    {
+      "tool": {
+        "name": "Terrascan",
+        "version": "Latest"
+      },
+      "arguments": {
+        "Scan": "scan",
+        "OutputType": "sarif",
+        "IacDir": "$(WorkingDirectory)",
+        "SkipRules": "accurics.azure.EKM.20,accurics.azure.NS.272",
+        "UseColors": "auto"
+      }
+    }
+  ]
+}
